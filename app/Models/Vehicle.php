@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Translatable\HasTranslations;
 
-class Vehicle extends Model
+class Vehicle extends Model implements HasMedia
 {
     /** @use HasFactory<VehicleFactory> */
-    use HasFactory, HasTranslations, LogsActivity;
+    use HasFactory, HasTranslations, InteractsWithMedia, LogsActivity;
 
     /** @var list<string> */
     public array $translatable = ['title', 'description'];
@@ -71,6 +73,11 @@ class Vehicle extends Model
     public function costs(): HasMany
     {
         return $this->hasMany(VehicleCost::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('photos');
     }
 
     public function getActivitylogOptions(): LogOptions

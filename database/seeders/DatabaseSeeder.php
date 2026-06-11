@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             DemoUserSeeder::class,
             DemoDataSeeder::class,
+            CmsSeeder::class,
         ]);
     }
 }
