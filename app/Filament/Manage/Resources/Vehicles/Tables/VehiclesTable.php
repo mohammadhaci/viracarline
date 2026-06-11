@@ -3,9 +3,16 @@
 namespace App\Filament\Manage\Resources\Vehicles\Tables;
 
 use App\Enums\VehicleStatus;
+use App\Models\Customer;
 use App\Models\Vehicle;
+use App\Services\VehicleTradingService;
 use App\Support\SwissMoney;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -61,6 +68,47 @@ class VehiclesTable
                 SelectFilter::make('partner_id')->label('Partner')->relationship('partner', 'company_name'),
             ])
             ->recordActions([
+                Action::make('recordSale')
+                    ->label('Verkauf erfassen')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->visible(fn (Vehicle $record) => $record->status !== VehicleStatus::Sold)
+                    ->schema([
+                        Select::make('customer_id')
+                            ->label('Käufer')
+                            ->options(Customer::orderBy('name')->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
+                        TextInput::make('price')
+                            ->label('Verkaufspreis (CHF)')
+                            ->numeric()
+                            ->required(),
+                        Select::make('vat_mode')
+                            ->label('MWST-Modus')
+                            ->options([
+                                'margin' => 'Differenzbesteuerung (Occasion)',
+                                'standard' => 'Standard (8.1%)',
+                            ])
+                            ->default('margin')
+                            ->required(),
+                        DateTimePicker::make('sold_at')
+                            ->label('Verkauft am')
+                            ->default(now()),
+                    ])
+                    ->action(function (Vehicle $record, array $data) {
+                        app(VehicleTradingService::class)->recordSale(
+                            $record,
+                            Customer::findOrFail($data['customer_id']),
+                            number_format((float) $data['price'], 2, '.', ''),
+                            $data['vat_mode'],
+                            $data['sold_at'] ? new \DateTimeImmutable($data['sold_at']) : null,
+                        );
+
+                        Notification::make()
+                            ->success()
+                            ->title('Verkauf erfasst — Vertrag und Rechnungsentwurf erstellt')
+                            ->send();
+                    }),
                 EditAction::make(),
             ]);
     }
