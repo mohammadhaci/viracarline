@@ -19,6 +19,7 @@ class CmsSeeder extends Seeder
         }
 
         $home = $this->seedHomePage();
+        $this->seedStaticPages();
         $this->seedMenus($home);
 
         $category = PostCategory::factory()->create([
@@ -73,6 +74,81 @@ class CmsSeeder extends Seeder
                 'published_at' => now(),
             ],
         );
+    }
+
+    private function seedStaticPages(): void
+    {
+        $pages = [
+            'ankauf' => [
+                'title' => ['de' => 'Wir kaufen Ihr Auto', 'fr' => 'Nous rachetons votre voiture', 'en' => 'We buy your car'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'contact_form', 'data' => [
+                        'heading' => $title,
+                        'intro' => 'Beschreiben Sie Ihr Fahrzeug und laden Sie Fotos hoch — wir melden uns innert 24 Stunden mit einem Angebot.',
+                        'with_photos' => true,
+                    ]],
+                ],
+            ],
+            'werkstatt' => [
+                'title' => ['de' => 'Werkstatt & Services', 'fr' => 'Atelier & services', 'en' => 'Workshop & services'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'services_grid', 'data' => [
+                        'heading' => $title,
+                        'services' => [
+                            ['title' => 'Service & Wartung', 'text' => 'Herstellerkonforme Wartung für alle Marken.'],
+                            ['title' => 'Reparaturen', 'text' => 'Mechanik, Elektronik und Karosserie.'],
+                            ['title' => 'Reifenservice', 'text' => 'Wechsel, Einlagerung und Verkauf.'],
+                        ],
+                    ]],
+                    ['type' => 'cta_banner', 'data' => ['heading' => 'Termin vereinbaren', 'cta_label' => 'Kontakt', 'cta_url' => '/de/kontakt']],
+                ],
+            ],
+            'ueber-uns' => [
+                'title' => ['de' => 'Über uns', 'fr' => 'À propos', 'en' => 'About us'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'rich_text', 'data' => ['content' => "<h1>{$title}</h1><p>Vira Car Lines AG kauft, verkauft und repariert Fahrzeuge in der Schweiz.</p>"]],
+                ],
+            ],
+            'kontakt' => [
+                'title' => ['de' => 'Kontakt', 'fr' => 'Contact', 'en' => 'Contact'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'contact_form', 'data' => ['heading' => $title]],
+                ],
+            ],
+            'impressum' => [
+                'title' => ['de' => 'Impressum', 'fr' => 'Mentions légales', 'en' => 'Imprint'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'rich_text', 'data' => ['content' => "<h1>{$title}</h1><p>Vira Car Lines AG — Angaben folgen.</p>"]],
+                ],
+            ],
+            'datenschutz' => [
+                'title' => ['de' => 'Datenschutzerklärung', 'fr' => 'Protection des données', 'en' => 'Privacy policy'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'rich_text', 'data' => ['content' => "<h1>{$title}</h1><p>Datenschutzerklärung nach revDSG — Inhalt folgt.</p>"]],
+                ],
+            ],
+            'agb' => [
+                'title' => ['de' => 'AGB', 'fr' => 'CG', 'en' => 'Terms'],
+                'blocks' => fn (string $title) => [
+                    ['type' => 'rich_text', 'data' => ['content' => "<h1>{$title}</h1><p>Allgemeine Geschäftsbedingungen — Inhalt folgt.</p>"]],
+                ],
+            ],
+        ];
+
+        foreach ($pages as $slug => $definition) {
+            Page::firstOrCreate(
+                ['slug' => $slug],
+                [
+                    'template' => 'default',
+                    'title' => $definition['title'],
+                    'blocks' => collect($definition['title'])
+                        ->map(fn (string $title) => ($definition['blocks'])($title))
+                        ->all(),
+                    'is_published' => true,
+                    'published_at' => now(),
+                ],
+            );
+        }
     }
 
     private function seedMenus(Page $home): void

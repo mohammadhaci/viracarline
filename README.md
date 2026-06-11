@@ -47,8 +47,11 @@ Then:
 
 ```bash
 php artisan migrate --seed
+npm install && npm run build   # frontend assets (Tailwind 4 + Alpine via Vite)
 php artisan serve
 ```
+
+During development use `npm run dev` instead of `npm run build`.
 
 `DEMO_PASSWORD` must be set for the demo users to be seeded (local/staging
 only — never hardcoded, never seeded in production).
