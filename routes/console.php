@@ -13,3 +13,7 @@ Artisan::command('inspire', function () {
 Schedule::command('queue:work --stop-when-empty --max-time=50')
     ->everyMinute()
     ->withoutOverlapping();
+
+// Nightly DB + media backup (spatie/laravel-backup), cleaned per retention policy.
+Schedule::command('backup:clean')->dailyAt('01:30');
+Schedule::command('backup:run')->dailyAt('02:00');

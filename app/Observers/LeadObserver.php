@@ -11,7 +11,10 @@ class LeadObserver
 {
     public function created(Lead $lead): void
     {
-        $admins = User::role('admin')->where('is_active', true)->get();
+        $admins = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('name', 'admin'))
+            ->where('is_active', true)
+            ->get();
 
         Notification::send($admins, new NewLeadNotification($lead));
     }

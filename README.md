@@ -90,6 +90,25 @@ CI (GitHub Actions) runs Pint, Pest against MySQL 8, `composer audit`, and
 Semgrep (`p/php` + `p/security-audit`) on every push. All jobs must pass.
 Commit convention: [Conventional Commits](https://www.conventionalcommits.org).
 
+## Project status
+
+| Phase | Scope | Status |
+|-------|-------|--------|
+| 0 | Foundation: 5 isolated panels, roles, CI | ✅ |
+| 1 | Core domain models + PartnerAmountService | ✅ |
+| 2 | Admin CMS (block builder, menus, blog, leads, redirects) | ✅ |
+| 3 | Public website DE/FR/EN (listing, detail, SEO, sitemap) | ✅ |
+| 4 | GM panel + partner amount system | ✅ |
+| 5 | Partner panel (CHF card, documents, IDOR tests) | ✅ |
+| 6 | Workshop panel (orders, parts, inspections) | ✅ |
+| 7 | Trading flow (Ankauf/Verkauf, contract PDF, margin) | ✅ |
+| 8 | Accountant panel (invoices, MWST, expenses, payouts) | ✅ |
+| 9 | Polish & notifications | ✅ |
+| 10 | Audit & go-live (runbook ready; deploy pending) | 🚧 |
+
+Out of scope for v1 (per plan): Swiss QR-bill (v2), system-generated partner
+statements (v2), 2FA enforcement (enable before go-live).
+
 ## Deployment
 
-Hostinger shared hosting — see `docs/DEPLOYMENT.md`.
+Hostinger shared hosting — full runbook in `docs/DEPLOYMENT.md`.
