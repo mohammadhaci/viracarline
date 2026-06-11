@@ -5,6 +5,7 @@ namespace App\Filament\Manage\Resources\Partners\Schemas;
 use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -55,6 +56,17 @@ class PartnerForm
                         TextInput::make('contact.name')->label('Kontaktperson'),
                         TextInput::make('contact.email')->label('E-Mail')->email(),
                         TextInput::make('contact.phone')->label('Telefon'),
+                    ]),
+                Section::make('Dokumente (Partner-Portal)')
+                    ->description('PDFs erscheinen im Partner-Portal unter «Dokumente» und liegen auf dem privaten Datenträger.')
+                    ->schema([
+                        SpatieMediaLibraryFileUpload::make('statements')
+                            ->collection('statements')
+                            ->disk('local')
+                            ->multiple()
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->downloadable()
+                            ->label('Abrechnungen / Dokumente'),
                     ]),
                 Section::make('Anzeigebetrag')
                     ->description('Leer lassen, damit der globale Standardwert gilt (Seite «Partner-Beträge»).')

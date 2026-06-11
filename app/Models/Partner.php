@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Partner extends Model
+class Partner extends Model implements HasMedia
 {
     /** @use HasFactory<PartnerFactory> */
-    use HasFactory, LogsActivity;
+    use HasFactory, InteractsWithMedia, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -43,6 +45,12 @@ class Partner extends Model
     public function vehicles(): HasMany
     {
         return $this->hasMany(Vehicle::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        // Statements/documents for the partner portal — private disk only (plan §6).
+        $this->addMediaCollection('statements')->useDisk('local');
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -4,11 +4,16 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StatementDownloadController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Middleware\HandleRedirects;
 use App\Http\Middleware\PublicMaintenanceMode;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/partner/statements/{media}/download', StatementDownloadController::class)
+    ->middleware(['auth', 'signed'])
+    ->name('partner.statements.download');
 
 Route::middleware([HandleRedirects::class, PublicMaintenanceMode::class])->group(function () {
     Route::get('/', fn () => redirect('/'.config('locales.default'), 302));
