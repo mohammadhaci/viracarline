@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Lead;
 use App\Models\Menu;
 use App\Models\Setting;
+use App\Observers\LeadObserver;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Lead::observe(LeadObserver::class);
+
         View::composer('layouts.public', function ($view) {
             $view->with([
                 'headerMenu' => Menu::with('items.page')->where('key', 'header')->first(),

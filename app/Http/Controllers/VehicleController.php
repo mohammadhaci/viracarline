@@ -16,6 +16,7 @@ class VehicleController extends Controller
             ->whereIn('status', [VehicleStatus::Listed, VehicleStatus::Reserved]);
 
         $vehicles = $query
+            ->with('media')
             ->when($request->filled('brand'), fn ($q) => $q->where('brand', $request->string('brand')))
             ->when($request->filled('fuel'), fn ($q) => $q->where('fuel', $request->string('fuel')))
             ->when($request->filled('transmission'), fn ($q) => $q->where('transmission', $request->string('transmission')))

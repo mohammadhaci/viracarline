@@ -1,5 +1,6 @@
 @php
     $vehicles = \App\Models\Vehicle::query()
+        ->with('media')
         ->where('is_published', true)
         ->where('status', \App\Enums\VehicleStatus::Listed)
         ->when($data['featured_only'] ?? false, fn ($q) => $q->where('is_featured', true))
